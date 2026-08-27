@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="SobaYozinは、曖昧な相談・企画・進捗をAIと整理し、次にやることを具体的な行動へ落としていくWindowsアプリです。限定β公開中。" />
+  <meta name="theme-color" content="#f5f8f7" />
+  <title>SobaYozin | 考えていることを、次にやることへ。</title>
+  <style>
+    :root {
+      --bg: #f6f8f7;
+      --paper: #fffdfa;
+      --ink: #24323b;
+      --muted: #6f7c83;
+      --line: #d9e2df;
+      --mint: #dcefe9;
+      --mint-strong: #3f756b;
+      --cream: #fff1dc;
+      --navy: #263847;
+      --shadow: 0 18px 50px rgba(42, 61, 65, .10);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 14% 4%, rgba(220,239,233,.9), transparent 28rem),
+        radial-gradient(circle at 86% 18%, rgba(255,241,220,.8), transparent 24rem),
+        var(--bg);
+      line-height: 1.75;
+      letter-spacing: .01em;
+    }
+
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+    .wrap { width: min(1120px, calc(100% - 40px)); margin-inline: auto; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(246,248,247,.78);
+      border-bottom: 1px solid rgba(217,226,223,.7);
+    }
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand {
+      display: inline-flex;
+      gap: 12px;
+      align-items: center;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: .03em;
+    }
+    .brand-mark {
+      width: 38px; height: 38px;
+      border-radius: 12px;
+      display: grid; place-items: center;
+      background: var(--cream);
+      border: 1px solid #f3dfc0;
+      color: var(--navy);
+      font-weight: 900;
+    }
+    .nav-links { display: flex; gap: 10px; align-items: center; }
+    .nav-link { text-decoration: none; color: var(--muted); padding: 10px 12px; font-size: 14px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 800;
+      border: 1px solid var(--line);
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 25px rgba(42,61,65,.10); }
+    .btn-primary { background: var(--navy); color: white; border-color: var(--navy); }
+    .btn-secondary { background: rgba(255,255,255,.72); }
+
+    .hero { padding: 92px 0 54px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.02fr .98fr;
+      gap: 58px;
+      align-items: center;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 12px;
+      border: 1px solid #cfe3dc;
+      background: rgba(255,255,255,.68);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--mint-strong);
+      letter-spacing: .08em;
+    }
+    .eyebrow-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--mint-strong); }
+    h1 {
+      font-size: clamp(40px, 5.8vw, 74px);
+      line-height: 1.08;
+      letter-spacing: -.035em;
+      margin: 24px 0 22px;
+      max-width: 9.5em;
+    }
+    .hero-copy {
+      font-size: clamp(17px, 2vw, 20px);
+      color: #536169;
+      max-width: 38em;
+      margin: 0 0 30px;
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-note { margin-top: 18px; font-size: 13px; color: var(--muted); }
+
+    .product-frame {
+      background: rgba(255,255,255,.76);
+      border: 1px solid rgba(211,221,218,.95);
+      padding: 12px;
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      transform: rotate(.7deg);
+    }
+    .product-frame img { border-radius: 15px; border: 1px solid #e6ecea; }
+    .frame-bar { display: flex; gap: 6px; padding: 2px 4px 10px; }
+    .frame-bar span { width: 8px; height: 8px; border-radius: 999px; background: #ced7d4; }
+
+    section { padding: 78px 0; }
+    .section-kicker {
+      color: var(--mint-strong);
+      font-weight: 900;
+      letter-spacing: .13em;
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.25;
+      letter-spacing: -.025em;
+      margin: 0 0 16px;
+    }
+    .section-lead { color: var(--muted); font-size: 17px; max-width: 720px; margin: 0; }
+
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 36px;
+    }
+    .card {
+      background: rgba(255,255,255,.74);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 24px;
+    }
+    .card-num {
+      width: 34px; height: 34px; border-radius: 10px;
+      display: grid; place-items: center;
+      background: var(--mint);
+      color: var(--mint-strong);
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+    .card h3 { margin: 0 0 8px; font-size: 19px; line-height: 1.45; }
+    .card p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    .loop {
+      margin-top: 38px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    .loop-step {
+      padding: 20px 16px;
+      text-align: center;
+      border-radius: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      position: relative;
+      font-weight: 800;
+      min-height: 116px;
+      display: grid;
+      place-items: center;
+    }
+    .loop-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #95a49f;
+      z-index: 2;
+    }
+    .loop-step span { display: block; color: var(--mint-strong); font-size: 12px; margin-bottom: 4px; letter-spacing: .08em; }
+
+    .feature-layout {
+      display: grid;
+      grid-template-columns: .78fr 1.22fr;
+      gap: 46px;
+      align-items: center;
+      margin-top: 42px;
+    }
+    .feature-list { display: grid; gap: 12px; }
+    .feature-item {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 13px;
+      align-items: start;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .feature-icon { width: 30px; height: 30px; border-radius: 10px; background: var(--cream); display: grid; place-items: center; font-weight: 900; }
+    .feature-item strong { display: block; margin-bottom: 3px; }
+    .feature-item small { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    .compare {
+      margin-top: 36px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,.72);
+    }
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr 1fr;
+      border-top: 1px solid var(--line);
+    }
+    .compare-row:first-child { border-top: none; background: rgba(220,239,233,.42); font-weight: 900; }
+    .compare-cell { padding: 17px 18px; }
+    .compare-cell + .compare-cell { border-left: 1px solid var(--line); }
+    .compare-muted { color: var(--muted); }
+
+    .beta-panel {
+      background: linear-gradient(135deg, rgba(38,56,71,.98), rgba(59,93,89,.98));
+      color: white;
+      border-radius: var(--radius-lg);
+      padding: clamp(32px, 6vw, 68px);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .beta-panel::before {
+      content: "";
+      position: absolute;
+      width: 320px; height: 320px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      right: -100px; top: -120px;
+    }
+    .beta-panel h2 { max-width: 760px; }
+    .beta-panel p { color: rgba(255,255,255,.76); max-width: 720px; }
+    .beta-points { display: flex; flex-wrap: wrap; gap: 9px; margin: 24px 0 30px; }
+    .beta-point { border: 1px solid rgba(255,255,255,.2); border-radius: 999px; padding: 7px 11px; font-size: 13px; background: rgba(255,255,255,.06); }
+    .beta-panel .btn-primary { background: white; color: var(--navy); border-color: white; }
+
+    .poctext {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,.16);
+      font-size: 14px;
+    }
+
+    footer { padding: 34px 0 54px; color: var(--muted); font-size: 13px; }
+    .footer-row { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+    @media (max-width: 860px) {
+      .hero { padding-top: 62px; }
+      .hero-grid, .feature-layout { grid-template-columns: 1fr; }
+      .hero-grid { gap: 34px; }
+      .product-frame { transform: none; }
+      .pain-grid { grid-template-columns: 1fr; }
+      .loop { grid-template-columns: 1fr; }
+      .loop-step:not(:last-child)::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -18px; transform: translateX(-50%); }
+      .compare-row { grid-template-columns: .9fr 1.05fr 1.05fr; font-size: 13px; }
+      .compare-cell { padding: 14px 10px; }
+      .nav-links .nav-link { display: none; }
+    }
+
+    @media (max-width: 560px) {
+      .wrap { width: min(100% - 24px, 1120px); }
+      .site-header .btn { min-height: 40px; padding-inline: 14px; font-size: 13px; }
+      h1 { font-size: 42px; }
+      section { padding: 58px 0; }
+      .compare { overflow-x: auto; }
+      .compare-row { min-width: 690px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="SobaYozin トップへ">
+        <span class="brand-mark">S.</span>
+        <span>SobaYozin</span>
+      </a>
+      <nav class="nav-links" aria-label="メインナビゲーション">
+        <a class="nav-link" href="#problem">できること</a>
+        <a class="nav-link" href="#difference">違い</a>
+        <a class="nav-link" href="#beta">限定β</a>
+        <a class="btn btn-primary" href="#beta">β版を試す</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow"><span class="eyebrow-dot"></span> WINDOWS LIMITED BETA</span>
+          <h1>考えていることを、<br>次にやることへ。</h1>
+          <p class="hero-copy">SobaYozinは、曖昧な相談・企画・進捗をAIと整理しながら、具体的なタスクと「今やる一手」へ落としていくWindowsアプリです。</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#beta">限定βを試す</a>
+            <a class="btn btn-secondary" href="#how">使い方を見る</a>
+          </div>
+          <p class="hero-note">Googleログインだけで利用できます。APIキーの準備は不要です。</p>
+        </div>
+        <div class="product-frame" aria-label="SobaYozinの画面">
+          <div class="frame-bar"><span></span><span></span><span></span></div>
+          <img src="assets/sobayozin-start.png" alt="SobaYozinで、話して始める・資料から始める・続きから始める画面" />
+        </div>
+      </div>
+    </section>
+
+    <section id="problem">
+      <div class="wrap">
+        <div class="section-kicker">FOR UNSTRUCTURED WORK</div>
+        <h2>「やりたいこと」はある。<br>でも、次の一手で止まる。</h2>
+        <p class="section-lead">計画や企画の全体像はなんとなく見えている。でも、具体的なタスクに落とすところで頭を使い切ってしまう。SobaYozinは、その“仕事になる前の仕事”を一緒に整理します。</p>
+
+        <div class="pain-grid">
+          <article class="card">
+            <div class="card-num">1</div>
+            <h3>企画はあるのに、タスク化で詰まる</h3>
+            <p>資料や話した内容から、今必要なタスク候補へ分解します。</p>
+          </article>
+          <article class="card">
+            <div class="card-num">2</div>
+            <h3>何から手を付けるかで迷う</h3>
+            <p>現在の状態を踏まえて、「まずここから」を優先して提示します。</p>
+          </article>
+          <article class="card">
+            <div class="card-num">3</div>
+            <h3>進捗を整理し直すのが面倒</h3>
+            <p>自然な言葉で進捗を伝えると、状態を整理して次の行動へつなげます。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="wrap">
+        <div class="section-kicker">CORE EXPERIENCE</div>
+        <h2>曖昧なまま話して、<br>一緒に仕事へ変える。</h2>
+        <p class="section-lead">最初から要件をきれいに書く必要はありません。SobaYozinが必要なところだけ確認し、次の行動候補まで整理します。</p>
+        <div class="loop" role="list" aria-label="SobaYozinの基本フロー">
+          <div class="loop-step" role="listitem"><div><span>01</span>曖昧な相談・企画</div></div>
+          <div class="loop-step" role="listitem"><div><span>02</span>AIが整理・確認</div></div>
+          <div class="loop-step" role="listitem"><div><span>03</span>タスク候補を提示</div></div>
+          <div class="loop-step" role="listitem"><div><span>04</span>人が採否を決める</div></div>
+          <div class="loop-step" role="listitem"><div><span>05</span>今やることを更新</div></div>
+        </div>
+
+        <div class="feature-layout">
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon">文</div>
+              <div><strong>企画書・資料から始める</strong><small>資料の内容を起点に、仕事の全体像と次の行動を整理。</small></div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">話</div>
+              <div><strong>話して始める</strong><small>まだまとまっていない状態からでも、会話しながらタスク候補へ。</small></div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">次</div>
+              <div><strong>「今やる」を優先表示</strong><small>全体を眺め続けず、まず動くための一手を見つけやすくします。</small></div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">進</div>
+              <div><strong>進捗を言葉で報告</strong><small>自然文の進捗から状態を整理し、次の判断につなげます。</small></div>
+            </div>
+          </div>
+          <div class="product-frame">
+            <div class="frame-bar"><span></span><span></span><span></span></div>
+            <img src="assets/sobayozin-goals.png" alt="SobaYozinで目標から具体的なタスク群を確認している画面" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="difference">
+      <div class="wrap">
+        <div class="section-kicker">WHY SOBAYOZIN</div>
+        <h2>答えるだけのAIから、<br>仕事を前に進めるAIへ。</h2>
+        <p class="section-lead">SobaYozinが狙っているのは、チャットの回答を増やすことではなく、曖昧な状態から次の行動が決まるまでをつなぐことです。</p>
+
+        <div class="compare" role="table" aria-label="一般的なAIチャットとSobaYozinの比較">
+          <div class="compare-row" role="row">
+            <div class="compare-cell" role="columnheader">比較</div>
+            <div class="compare-cell" role="columnheader">一般的なAIチャット</div>
+            <div class="compare-cell" role="columnheader">SobaYozin</div>
+          </div>
+          <div class="compare-row" role="row">
+            <div class="compare-cell" role="rowheader">入力</div>
+            <div class="compare-cell compare-muted">質問・指示を作って渡す</div>
+            <div class="compare-cell">曖昧な相談からでも始める</div>
+          </div>
+          <div class="compare-row" role="row">
+            <div class="compare-cell" role="rowheader">整理</div>
+            <div class="compare-cell compare-muted">会話単位で回答</div>
+            <div class="compare-cell">タスク候補と次の一手へ接続</div>
+          </div>
+          <div class="compare-row" role="row">
+            <div class="compare-cell" role="rowheader">判断</div>
+            <div class="compare-cell compare-muted">提案を受け取って自分で管理</div>
+            <div class="compare-cell">AIが提案し、人が最終判断</div>
+          </div>
+          <div class="compare-row" role="row">
+            <div class="compare-cell" role="rowheader">進捗</div>
+            <div class="compare-cell compare-muted">必要に応じて再説明</div>
+            <div class="compare-cell">進捗を整理し、次の行動を更新</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="beta">
+      <div class="wrap">
+        <div class="beta-panel">
+          <div class="section-kicker" style="color:#bfe3d9">PUBLIC BETA 0.7.8</div>
+          <h2>限定βで、実際の仕事に使ってもらっています。</h2>
+          <p>まだ完成品を売る段階ではなく、「どこで詰まるか」「AIの整理が本当に役立つか」「どんな仕事・人に刺さるか」を検証しています。興味のある方にはβ版をお渡ししています。</p>
+          <div class="beta-points">
+            <span class="beta-point">Windows</span>
+            <span class="beta-point">Googleログイン</span>
+            <span class="beta-point">APIキー不要</span>
+            <span class="beta-point">限定β</span>
+          </div>
+          <a class="btn btn-primary" href="#contact">β版を試したい</a>
+          <div class="poctext" id="contact">
+            <strong>βテスター / PoCのご相談</strong><br>
+            現在は個別にご案内しています。SobaYozinをご紹介した投稿・コミュニティ、または開発者へのDMからご連絡ください。<br>
+            <span style="opacity:.72">※テスト中のため、機密情報・秘密情報は入力しないでください。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-row">
+      <div><strong>SobaYozin</strong> — 考えていることを、次にやることへ。</div>
+      <div>© 2026 SobaYozin. Limited Beta.</div>
+    </div>
+  </footer>
+</body>
+</html>
